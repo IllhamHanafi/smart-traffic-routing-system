@@ -1,10 +1,11 @@
 module route-engine
 
-go 1.23.0
+go 1.24.0
 
-toolchain go1.24.2
-
-require github.com/gin-gonic/gin v1.10.0
+require (
+	github.com/gin-gonic/gin v1.10.0
+	github.com/google/uuid v1.6.0
+)
 
 require (
 	github.com/bytedance/sonic v1.13.2 // indirect
