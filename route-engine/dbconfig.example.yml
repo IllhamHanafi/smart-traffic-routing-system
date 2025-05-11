@@ -1,11 +1,11 @@
-development:
+database:
   dialect: postgres
-  datasource: dbname=postgres sslmode=disable
+  datasource: dbname=route-engine sslmode=disable
   dir: repository/migration
   table: migrations
 
-production:
+seed:
   dialect: postgres
-  datasource: dbname=myapp sslmode=disable
-  dir: repository/migration
-  table: migrations
+  datasource: dbname=route-engine sslmode=disable
+  dir: repository/seed
+  table: seeds
