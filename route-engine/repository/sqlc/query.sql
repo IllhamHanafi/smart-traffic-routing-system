@@ -1,0 +1,3 @@
+-- name: GetActiveRoutingLogic :one
+SELECT id, allocation_logic FROM routing_decision
+WHERE status = 'active' LIMIT 1;

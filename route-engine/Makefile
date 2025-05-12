@@ -7,6 +7,9 @@ debug:
 watch:
 	go mod tidy && find . -name "*.go" | entr -r dlv debug --headless --listen=:2345 --api-version=2 --accept-multiclient --continue .
 
+generate:
+	sqlc generate
+
 # Migrations and seed
 migrate-up:
 	sql-migrate up -env="database"

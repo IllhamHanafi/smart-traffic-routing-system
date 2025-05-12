@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"route-engine/config"
+	"route-engine/handler"
+	"route-engine/internal"
 	"route-engine/router"
 
 	"github.com/gin-gonic/gin"
@@ -11,9 +13,15 @@ import (
 func main() {
 	r := gin.Default()
 
-	// Register routes
-	router.RegisterRoute(r)
-	cfg := config.ParseConfig()
+	// init handler and dependencies
+	svc := internal.New()
+	defer svc.Close()
+	h := handler.New(svc)
 
+	// Register routes
+	router.RegisterRoute(r, h)
+
+	// start server
+	cfg := config.GetConfig()
 	r.Run(fmt.Sprintf(":%d", cfg.Port))
 }

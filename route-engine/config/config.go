@@ -1,8 +1,15 @@
 package config
 
 import (
+	"sync"
+
 	"github.com/caarlos0/env/v11"
 	_ "github.com/joho/godotenv/autoload"
+)
+
+var (
+	once sync.Once
+	cfg  Config
 )
 
 type Config struct {
@@ -12,18 +19,20 @@ type Config struct {
 }
 
 type Database struct {
-	Host     string `env:"HOST" envDefault:"localhost"`
-	Port     int    `env:"PORT" envDefault:"5432"`
-	Username string `env:"USERNAME"`
-	Password string `env:"PASSWORD"`
-	Name     string `env:"NAME" envDefault:"route-engine"`
+	Library      string `env:"LIBRARY" envDefault:"sqlc"`
+	Host         string `env:"HOST" envDefault:"localhost"`
+	Port         int    `env:"PORT" envDefault:"5432"`
+	Username     string `env:"USERNAME"`
+	Password     string `env:"PASSWORD"`
+	DatabaseName string `env:"DATABASE_NAME" envDefault:"route-engine"`
 }
 
-func ParseConfig() *Config {
-	var cfg Config
-	err := env.Parse(&cfg)
-	if err != nil {
-		panic(err)
-	}
-	return &cfg
+func GetConfig() Config {
+	once.Do(func() {
+		err := env.Parse(&cfg)
+		if err != nil {
+			panic(err)
+		}
+	})
+	return cfg
 }

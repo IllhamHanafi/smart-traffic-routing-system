@@ -8,12 +8,26 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func HandleCreateOrder(c *gin.Context) {
+type handler struct {
+	internal internal.InternalInterface
+}
+
+func New(i internal.InternalInterface) HandlerInterface {
+	return &handler{
+		internal: i,
+	}
+}
+
+type HandlerInterface interface {
+	HandleCreateOrder(c *gin.Context)
+}
+
+func (h *handler) HandleCreateOrder(c *gin.Context) {
 	var order model.Order
 	if err := c.ShouldBindJSON(&order); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	internal.ProcessOrder(c, order)
+	h.internal.ProcessOrder(c, order)
 }

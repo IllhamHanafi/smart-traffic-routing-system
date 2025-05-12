@@ -7,10 +7,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ProcessOrder(c *gin.Context, order model.Order) {
+func (s *Service) ProcessOrder(c *gin.Context, order model.Order) {
+	res, err := s.repository.GetActiveRoutingLogic(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+			"status":  "error",
+		})
+		return
+	}
+
+	allocatedCourier := getCourierFromProbability(res.AllocationLogic)
+
 	c.JSON(http.StatusOK, gin.H{
-		"message": "order created !",
-		"order":   order.ID,
-		"status":  "success",
+		"message":          "order created !",
+		"order":            order.ID,
+		"status":           "success",
+		"allocatedCourier": allocatedCourier,
 	})
 }

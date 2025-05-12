@@ -1,0 +1,16 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "repository/sqlc/query.sql"
+    schema: "repository/migration"
+    gen:
+      go:
+        package: "sqlc"
+        out: "repository/sqlc"
+        sql_package: "pgx/v5"
+        overrides:
+        - db_type: "uuid"
+          go_type:
+            import: "github.com/google/uuid"
+            type: "UUID"
+        # emit_interface: true
