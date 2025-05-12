@@ -9,6 +9,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const getActiveRoutingLogic = `-- name: GetActiveRoutingLogic :one
@@ -26,4 +27,51 @@ func (q *Queries) GetActiveRoutingLogic(ctx context.Context) (GetActiveRoutingLo
 	var i GetActiveRoutingLogicRow
 	err := row.Scan(&i.ID, &i.AllocationLogic)
 	return i, err
+}
+
+const getCourierByCode = `-- name: GetCourierByCode :one
+SELECT id, name, code FROM courier
+WHERE code = $1
+`
+
+type GetCourierByCodeRow struct {
+	ID   uuid.UUID
+	Name string
+	Code string
+}
+
+func (q *Queries) GetCourierByCode(ctx context.Context, code string) (GetCourierByCodeRow, error) {
+	row := q.db.QueryRow(ctx, getCourierByCode, code)
+	var i GetCourierByCodeRow
+	err := row.Scan(&i.ID, &i.Name, &i.Code)
+	return i, err
+}
+
+const insertRoutingDecisionLog = `-- name: InsertRoutingDecisionLog :exec
+INSERT INTO routing_decision_log (
+    id, order_id, courier_id, routing_decision_id, status, reason, created_at, created_by
+) VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7)
+`
+
+type InsertRoutingDecisionLogParams struct {
+	OrderID           uuid.UUID
+	CourierID         uuid.UUID
+	RoutingDecisionID uuid.UUID
+	Status            string
+	Reason            pgtype.Text
+	CreatedAt         pgtype.Timestamp
+	CreatedBy         uuid.UUID
+}
+
+func (q *Queries) InsertRoutingDecisionLog(ctx context.Context, arg InsertRoutingDecisionLogParams) error {
+	_, err := q.db.Exec(ctx, insertRoutingDecisionLog,
+		arg.OrderID,
+		arg.CourierID,
+		arg.RoutingDecisionID,
+		arg.Status,
+		arg.Reason,
+		arg.CreatedAt,
+		arg.CreatedBy,
+	)
+	return err
 }

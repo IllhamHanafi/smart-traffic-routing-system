@@ -11,12 +11,12 @@ import (
 
 type Courier struct {
 	ID        uuid.UUID
-	Name      pgtype.Text
-	Code      pgtype.Text
+	Name      string
+	Code      string
 	CreatedAt pgtype.Timestamp
-	CreatedBy pgtype.UUID
+	CreatedBy uuid.UUID
 	UpdatedAt pgtype.Timestamp
-	UpdatedBy pgtype.UUID
+	UpdatedBy uuid.UUID
 }
 
 type RoutingDecision struct {
@@ -24,7 +24,18 @@ type RoutingDecision struct {
 	Status          string
 	AllocationLogic []byte
 	CreatedAt       pgtype.Timestamp
-	CreatedBy       pgtype.UUID
+	CreatedBy       uuid.UUID
 	UpdatedAt       pgtype.Timestamp
-	UpdatedBy       pgtype.UUID
+	UpdatedBy       uuid.UUID
+}
+
+type RoutingDecisionLog struct {
+	ID                uuid.UUID
+	OrderID           uuid.UUID
+	CourierID         uuid.UUID
+	RoutingDecisionID uuid.UUID
+	Status            string
+	Reason            pgtype.Text
+	CreatedAt         pgtype.Timestamp
+	CreatedBy         uuid.UUID
 }

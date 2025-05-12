@@ -2,6 +2,10 @@ package model
 
 import "github.com/google/uuid"
 
+var (
+	SYSTEM_UUID = uuid.MustParse("ffffffff-ffff-ffff-ffff-ffffffffffff")
+)
+
 type Order struct {
 	ID uuid.UUID `json:"id"`
 }
@@ -15,4 +19,10 @@ type JSONResponse struct {
 type SuccessCreateOrder struct {
 	JSONResponse
 	OrderID uuid.UUID `json:"order_id"`
+}
+
+type Courier struct {
+	ID   uuid.UUID
+	Name string
+	Code string
 }

@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"route-engine/config"
+	"route-engine/model"
 )
 
 type Driver string
@@ -13,6 +14,8 @@ const (
 
 type Repository interface {
 	GetActiveRoutingLogic(ctx context.Context) (ActiveRoutingLogicResult, error)
+	GetCourierByCode(ctx context.Context, courierCode string) (model.Courier, error)
+	InsertRoutingDecisionLog(ctx context.Context, input InsertRoutingDecisionLogParams) error
 	Close()
 }
 

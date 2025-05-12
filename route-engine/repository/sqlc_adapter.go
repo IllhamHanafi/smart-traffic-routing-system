@@ -6,9 +6,12 @@ import (
 	"fmt"
 	"os"
 	"route-engine/config"
+	"route-engine/model"
 	sqlc "route-engine/repository/sqlc"
+	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type SqlcRepository struct {
@@ -47,6 +50,40 @@ func (s *SqlcRepository) GetActiveRoutingLogic(ctx context.Context) (ActiveRouti
 	return ActiveRoutingLogicResult{
 		ID:              res.ID,
 		AllocationLogic: allocationLogicMap,
+	}, nil
+}
+
+func (s *SqlcRepository) InsertRoutingDecisionLog(ctx context.Context, input InsertRoutingDecisionLogParams) error {
+	reason := pgtype.Text{}
+	if input.Reason != "" {
+		reason = pgtype.Text{String: input.Reason, Valid: true}
+	}
+	createdAt := pgtype.Timestamp{
+		Time:  time.Now(),
+		Valid: true,
+	}
+
+	err := s.queries.InsertRoutingDecisionLog(ctx, sqlc.InsertRoutingDecisionLogParams{
+		OrderID:           input.OrderID,
+		CourierID:         input.CourierID,
+		RoutingDecisionID: input.RoutingDecisionID,
+		Status:            input.Status,
+		Reason:            reason,
+		CreatedBy:         input.CreatedBy,
+		CreatedAt:         createdAt,
+	})
+	return err
+}
+
+func (s *SqlcRepository) GetCourierByCode(ctx context.Context, courierCode string) (model.Courier, error) {
+	res, err := s.queries.GetCourierByCode(ctx, courierCode)
+	if err != nil {
+		return model.Courier{}, err
+	}
+	return model.Courier{
+		ID:   res.ID,
+		Code: res.Code,
+		Name: res.Name,
 	}, nil
 }
 
