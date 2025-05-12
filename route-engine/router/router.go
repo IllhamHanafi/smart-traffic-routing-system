@@ -9,4 +9,5 @@ import (
 // RegisterRoute registers the ping endpoint to the router
 func RegisterRoute(r *gin.Engine, h handler.HandlerInterface) {
 	r.POST("/route/order", h.HandleCreateOrder)
+	r.GET("/routing-decision/active", h.HandleGetActiveRoutingDecision)
 }

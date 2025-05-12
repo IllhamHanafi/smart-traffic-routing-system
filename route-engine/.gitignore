@@ -47,3 +47,4 @@ go.work
 
 dbconfig.yml
 .env
+__debug_bin*

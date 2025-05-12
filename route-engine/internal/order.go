@@ -27,6 +27,7 @@ func (s *Service) ProcessOrder(c *gin.Context, order model.Order) {
 			"message": err.Error(),
 			"status":  "error",
 		})
+		return
 	}
 
 	// to do: make proses async using message queue
@@ -43,6 +44,7 @@ func (s *Service) ProcessOrder(c *gin.Context, order model.Order) {
 			"message": err.Error(),
 			"status":  "error",
 		})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
