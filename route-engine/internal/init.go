@@ -9,8 +9,9 @@ import (
 )
 
 type InternalInterface interface {
-	Close()
+	ProcessGetActiveRoutingDecision(c *gin.Context)
 	ProcessOrder(c *gin.Context, order model.Order)
+	Close()
 }
 
 type Service struct {

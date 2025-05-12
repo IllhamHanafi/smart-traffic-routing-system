@@ -20,6 +20,7 @@ func New(i internal.InternalInterface) HandlerInterface {
 
 type HandlerInterface interface {
 	HandleCreateOrder(c *gin.Context)
+	HandleGetActiveRoutingDecision(c *gin.Context)
 }
 
 func (h *handler) HandleCreateOrder(c *gin.Context) {
@@ -30,4 +31,8 @@ func (h *handler) HandleCreateOrder(c *gin.Context) {
 	}
 
 	h.internal.ProcessOrder(c, order)
+}
+
+func (h *handler) HandleGetActiveRoutingDecision(c *gin.Context) {
+	h.internal.ProcessGetActiveRoutingDecision(c)
 }
