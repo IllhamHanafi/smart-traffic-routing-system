@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"route-engine/config"
 	"route-engine/router"
 
 	"github.com/gin-gonic/gin"
@@ -11,6 +13,7 @@ func main() {
 
 	// Register routes
 	router.RegisterRoute(r)
+	cfg := config.ParseConfig()
 
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	r.Run(fmt.Sprintf(":%d", cfg.Port))
 }
