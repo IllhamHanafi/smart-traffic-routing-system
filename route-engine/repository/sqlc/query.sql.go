@@ -47,6 +47,46 @@ func (q *Queries) GetCourierByCode(ctx context.Context, code string) (GetCourier
 	return i, err
 }
 
+const inactivateCurrentActiveRoutingDecision = `-- name: InactivateCurrentActiveRoutingDecision :exec
+UPDATE routing_decision SET status = 'inactive', updated_at = $1, updated_by = $2
+WHERE status = 'active'
+`
+
+type InactivateCurrentActiveRoutingDecisionParams struct {
+	UpdatedAt pgtype.Timestamp
+	UpdatedBy uuid.UUID
+}
+
+func (q *Queries) InactivateCurrentActiveRoutingDecision(ctx context.Context, arg InactivateCurrentActiveRoutingDecisionParams) error {
+	_, err := q.db.Exec(ctx, inactivateCurrentActiveRoutingDecision, arg.UpdatedAt, arg.UpdatedBy)
+	return err
+}
+
+const insertActiveRoutingDecision = `-- name: InsertActiveRoutingDecision :exec
+INSERT INTO routing_decision (
+    id, status, allocation_logic, created_at, created_by, updated_at, updated_by
+) VALUES (gen_random_uuid(), 'active', $1, $2, $3, $4, $5)
+`
+
+type InsertActiveRoutingDecisionParams struct {
+	AllocationLogic []byte
+	CreatedAt       pgtype.Timestamp
+	CreatedBy       uuid.UUID
+	UpdatedAt       pgtype.Timestamp
+	UpdatedBy       uuid.UUID
+}
+
+func (q *Queries) InsertActiveRoutingDecision(ctx context.Context, arg InsertActiveRoutingDecisionParams) error {
+	_, err := q.db.Exec(ctx, insertActiveRoutingDecision,
+		arg.AllocationLogic,
+		arg.CreatedAt,
+		arg.CreatedBy,
+		arg.UpdatedAt,
+		arg.UpdatedBy,
+	)
+	return err
+}
+
 const insertRoutingDecisionLog = `-- name: InsertRoutingDecisionLog :exec
 INSERT INTO routing_decision_log (
     id, order_id, courier_id, routing_decision_id, status, reason, created_at, created_by

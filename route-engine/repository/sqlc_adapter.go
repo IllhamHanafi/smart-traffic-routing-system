@@ -87,6 +87,53 @@ func (s *SqlcRepository) GetCourierByCode(ctx context.Context, courierCode strin
 	}, nil
 }
 
+func (s *SqlcRepository) CreateActiveRoutingDecision(ctx context.Context, input InsertNewRoutingDecisionParams) error {
+	currentTime := time.Now()
+	// convert map to json
+	allocationLogic, err := json.Marshal(input.AllocationLogic)
+	if err != nil {
+		return err
+	}
+
+	tx, err := s.conn.Begin(ctx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx)
+	qtx := s.queries.WithTx(tx)
+
+	// inactivate current active routing decision
+	err = qtx.InactivateCurrentActiveRoutingDecision(ctx, sqlc.InactivateCurrentActiveRoutingDecisionParams{
+		UpdatedAt: pgtype.Timestamp{
+			Time:  currentTime,
+			Valid: true,
+		},
+		UpdatedBy: input.UserID,
+	})
+	if err != nil {
+		return err
+	}
+
+	// insert new routing decision with status active
+	if err := qtx.InsertActiveRoutingDecision(ctx, sqlc.InsertActiveRoutingDecisionParams{
+		AllocationLogic: allocationLogic,
+		CreatedAt: pgtype.Timestamp{
+			Time:  currentTime,
+			Valid: true,
+		},
+		CreatedBy: input.UserID,
+		UpdatedAt: pgtype.Timestamp{
+			Time:  currentTime,
+			Valid: true,
+		},
+		UpdatedBy: input.UserID,
+	}); err != nil {
+		return err
+	}
+
+	return tx.Commit(ctx)
+}
+
 func (s *SqlcRepository) Close() {
 	s.conn.Close(context.Background())
 }

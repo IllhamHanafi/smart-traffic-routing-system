@@ -10,6 +10,11 @@ type Order struct {
 	ID uuid.UUID `json:"id"`
 }
 
+type CreateRoutingDecisionRequest struct {
+	UserID          uuid.UUID      `json:"user_id"`
+	AllocationLogic map[string]int `json:"allocation_logic"`
+}
+
 type JSONResponse struct {
 	RequestID uuid.UUID `json:"request_id"`
 	Message   string    `json:"message"`

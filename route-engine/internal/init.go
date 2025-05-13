@@ -11,6 +11,7 @@ import (
 type InternalInterface interface {
 	ProcessGetActiveRoutingDecision(c *gin.Context)
 	ProcessOrder(c *gin.Context, order model.Order)
+	ProcessCreateRoutingDecision(c *gin.Context, order model.CreateRoutingDecisionRequest)
 	Close()
 }
 
