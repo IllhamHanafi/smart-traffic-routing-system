@@ -47,6 +47,61 @@ func (q *Queries) GetCourierByCode(ctx context.Context, code string) (GetCourier
 	return i, err
 }
 
+const getRoutingDecisionLogs = `-- name: GetRoutingDecisionLogs :many
+SELECT id, order_id, courier_id, routing_decision_id, status, reason, created_at, created_by FROM routing_decision_log
+  WHERE ($3::uuid is NULL or order_id = $3::uuid)  
+  AND ($4::uuid is NULL or courier_id = $4::uuid)  
+  AND ($5::uuid is NULL or routing_decision_id = $5::uuid)
+  AND ($6::text is NULL or status = $6::text)
+  ORDER BY created_at DESC
+  LIMIT $1 OFFSET $2
+`
+
+type GetRoutingDecisionLogsParams struct {
+	Limit             int32
+	Offset            int32
+	OrderID           pgtype.UUID
+	CourierID         pgtype.UUID
+	RoutingDecisionID pgtype.UUID
+	Status            pgtype.Text
+}
+
+func (q *Queries) GetRoutingDecisionLogs(ctx context.Context, arg GetRoutingDecisionLogsParams) ([]RoutingDecisionLog, error) {
+	rows, err := q.db.Query(ctx, getRoutingDecisionLogs,
+		arg.Limit,
+		arg.Offset,
+		arg.OrderID,
+		arg.CourierID,
+		arg.RoutingDecisionID,
+		arg.Status,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []RoutingDecisionLog
+	for rows.Next() {
+		var i RoutingDecisionLog
+		if err := rows.Scan(
+			&i.ID,
+			&i.OrderID,
+			&i.CourierID,
+			&i.RoutingDecisionID,
+			&i.Status,
+			&i.Reason,
+			&i.CreatedAt,
+			&i.CreatedBy,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const inactivateCurrentActiveRoutingDecision = `-- name: InactivateCurrentActiveRoutingDecision :exec
 UPDATE routing_decision SET status = 'inactive', updated_at = $1, updated_by = $2
 WHERE status = 'active'

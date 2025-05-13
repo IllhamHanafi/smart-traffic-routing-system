@@ -134,6 +134,56 @@ func (s *SqlcRepository) CreateActiveRoutingDecision(ctx context.Context, input 
 	return tx.Commit(ctx)
 }
 
+func (s *SqlcRepository) GetRoutingDecisionLogs(ctx context.Context, input GetRoutingDecisionLogsRequest) ([]model.RoutingDecisionLog, error) {
+	params := sqlc.GetRoutingDecisionLogsParams{
+		Limit:  input.Limit,
+		Offset: input.Offset,
+	}
+	if input.OrderID != nil {
+		params.OrderID = pgtype.UUID{
+			Bytes: *input.OrderID,
+			Valid: true,
+		}
+	}
+	if input.CourierID != nil {
+		params.CourierID = pgtype.UUID{
+			Bytes: *input.CourierID,
+			Valid: true,
+		}
+	}
+	if input.RoutingDecisionID != nil {
+		params.RoutingDecisionID = pgtype.UUID{
+			Bytes: *input.RoutingDecisionID,
+			Valid: true,
+		}
+	}
+	if input.Status != nil {
+		params.Status = pgtype.Text{
+			String: *input.Status,
+			Valid:  true,
+		}
+	}
+
+	res, err := s.queries.GetRoutingDecisionLogs(ctx, params)
+	if err != nil {
+		return []model.RoutingDecisionLog{}, err
+	}
+	var items []model.RoutingDecisionLog
+	for _, i := range res {
+		items = append(items, model.RoutingDecisionLog{
+			ID:                i.ID,
+			OrderID:           i.OrderID,
+			CourierID:         i.CourierID,
+			RoutingDecisionID: i.RoutingDecisionID,
+			Status:            i.Status,
+			Reason:            i.Reason.String,
+			CreatedAt:         i.CreatedAt.Time,
+			CreatedBy:         i.CreatedBy,
+		})
+	}
+	return items, nil
+}
+
 func (s *SqlcRepository) Close() {
 	s.conn.Close(context.Background())
 }
