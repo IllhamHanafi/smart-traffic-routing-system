@@ -22,3 +22,12 @@ type InsertNewRoutingDecisionParams struct {
 	UserID          uuid.UUID
 	AllocationLogic map[string]int
 }
+
+type GetRoutingDecisionLogsRequest struct {
+	OrderID           *uuid.UUID
+	CourierID         *uuid.UUID
+	RoutingDecisionID *uuid.UUID
+	Status            *string
+	Limit             int32
+	Offset            int32
+}

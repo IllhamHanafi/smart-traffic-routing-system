@@ -22,6 +22,7 @@ type HandlerInterface interface {
 	HandleCreateOrder(c *gin.Context)
 	HandleGetActiveRoutingDecision(c *gin.Context)
 	HandleCreateActiveRoutingDecision(c *gin.Context)
+	HandleGetRoutingDecisionLogs(c *gin.Context)
 }
 
 func (h *handler) HandleCreateOrder(c *gin.Context) {
@@ -46,4 +47,14 @@ func (h *handler) HandleCreateActiveRoutingDecision(c *gin.Context) {
 	}
 
 	h.internal.ProcessCreateRoutingDecision(c, request)
+}
+
+func (h *handler) HandleGetRoutingDecisionLogs(c *gin.Context) {
+	var request model.GetRoutingDecisionLogsRequest
+	if err := c.ShouldBindQuery(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	h.internal.ProcessGetRoutingDecisionLogs(c, request)
 }
