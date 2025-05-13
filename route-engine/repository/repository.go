@@ -16,6 +16,7 @@ type Repository interface {
 	GetActiveRoutingLogic(ctx context.Context) (ActiveRoutingLogicResult, error)
 	GetCourierByCode(ctx context.Context, courierCode string) (model.Courier, error)
 	InsertRoutingDecisionLog(ctx context.Context, input InsertRoutingDecisionLogParams) error
+	CreateActiveRoutingDecision(ctx context.Context, input InsertNewRoutingDecisionParams) error
 	Close()
 }
 

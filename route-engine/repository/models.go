@@ -17,3 +17,8 @@ type InsertRoutingDecisionLogParams struct {
 	Reason            string
 	CreatedBy         uuid.UUID
 }
+
+type InsertNewRoutingDecisionParams struct {
+	UserID          uuid.UUID
+	AllocationLogic map[string]int
+}
