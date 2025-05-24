@@ -2,8 +2,9 @@ package repository
 
 import (
 	"context"
-	"route-engine/config"
-	"route-engine/model"
+
+	"github.com/IllhamHanafi/smart-traffic-routing-system/route-engine/config"
+	"github.com/IllhamHanafi/smart-traffic-routing-system/route-engine/model"
 )
 
 type Driver string

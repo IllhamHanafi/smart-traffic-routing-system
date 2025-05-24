@@ -1,4 +1,4 @@
-module route-engine
+module github.com/IllhamHanafi/smart-traffic-routing-system/route-engine
 
 go 1.24.0
 

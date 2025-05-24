@@ -1,9 +1,9 @@
 package internal
 
 import (
-	"route-engine/config"
-	"route-engine/model"
-	"route-engine/repository"
+	"github.com/IllhamHanafi/smart-traffic-routing-system/route-engine/config"
+	"github.com/IllhamHanafi/smart-traffic-routing-system/route-engine/model"
+	"github.com/IllhamHanafi/smart-traffic-routing-system/route-engine/repository"
 
 	"github.com/gin-gonic/gin"
 )

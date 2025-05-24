@@ -1,7 +1,7 @@
 package router
 
 import (
-	"route-engine/handler"
+	"github.com/IllhamHanafi/smart-traffic-routing-system/route-engine/handler"
 
 	"github.com/gin-gonic/gin"
 )

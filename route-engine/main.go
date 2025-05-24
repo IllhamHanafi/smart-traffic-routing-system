@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"route-engine/config"
-	"route-engine/handler"
-	"route-engine/internal"
-	"route-engine/router"
+
+	"github.com/IllhamHanafi/smart-traffic-routing-system/route-engine/config"
+	"github.com/IllhamHanafi/smart-traffic-routing-system/route-engine/handler"
+	"github.com/IllhamHanafi/smart-traffic-routing-system/route-engine/internal"
+	"github.com/IllhamHanafi/smart-traffic-routing-system/route-engine/router"
 
 	"github.com/gin-gonic/gin"
 )

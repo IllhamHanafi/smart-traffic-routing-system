@@ -2,8 +2,9 @@ package handler
 
 import (
 	"net/http"
-	"route-engine/internal"
-	"route-engine/model"
+
+	"github.com/IllhamHanafi/smart-traffic-routing-system/route-engine/internal"
+	"github.com/IllhamHanafi/smart-traffic-routing-system/route-engine/model"
 
 	"github.com/gin-gonic/gin"
 )

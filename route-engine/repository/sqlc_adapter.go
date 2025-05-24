@@ -5,10 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"route-engine/config"
-	"route-engine/model"
-	sqlc "route-engine/repository/sqlc"
 	"time"
+
+	"github.com/IllhamHanafi/smart-traffic-routing-system/route-engine/config"
+	"github.com/IllhamHanafi/smart-traffic-routing-system/route-engine/model"
+	sqlc "github.com/IllhamHanafi/smart-traffic-routing-system/route-engine/repository/sqlc"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
