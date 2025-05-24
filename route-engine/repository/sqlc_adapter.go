@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/IllhamHanafi/smart-traffic-routing-system/route-engine/config"
 	"github.com/IllhamHanafi/smart-traffic-routing-system/route-engine/model"
 	sqlc "github.com/IllhamHanafi/smart-traffic-routing-system/route-engine/repository/sqlc"
+	"github.com/IllhamHanafi/smart-traffic-routing-system/shared-libs/config"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"

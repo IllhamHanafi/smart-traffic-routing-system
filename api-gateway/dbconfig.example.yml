@@ -1,0 +1,11 @@
+database:
+  dialect: postgres
+  datasource: dbname=api-gateway sslmode=disable
+  dir: repository/migration
+  table: migrations
+
+seed:
+  dialect: postgres
+  datasource: dbname=api-gateway sslmode=disable
+  dir: repository/seed
+  table: seeds

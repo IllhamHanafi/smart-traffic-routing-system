@@ -25,7 +25,7 @@ type Database struct {
 	Port         int    `env:"PORT" envDefault:"5432"`
 	Username     string `env:"USERNAME"`
 	Password     string `env:"PASSWORD"`
-	DatabaseName string `env:"DATABASE_NAME" envDefault:"route-engine"`
+	DatabaseName string `env:"DATABASE_NAME" envDefault:"api-gateway"`
 }
 
 func GetConfig() Config {
