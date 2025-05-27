@@ -8,4 +8,5 @@ import (
 
 // RegisterRoute registers the ping endpoint to the router
 func RegisterRoute(r *gin.Engine, h handler.HandlerInterface) {
+	r.POST("/user/register", h.HandleRegisterUser)
 }

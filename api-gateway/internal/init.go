@@ -2,10 +2,13 @@ package internal
 
 import (
 	"github.com/IllhamHanafi/smart-traffic-routing-system/api-gateway/config"
+	"github.com/IllhamHanafi/smart-traffic-routing-system/api-gateway/model"
 	"github.com/IllhamHanafi/smart-traffic-routing-system/api-gateway/repository"
+	"github.com/gin-gonic/gin"
 )
 
 type InternalInterface interface {
+	ProcessRegisterUser(c *gin.Context, input model.RegisterUserInput)
 	Close()
 }
 

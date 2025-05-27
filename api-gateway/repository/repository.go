@@ -1,7 +1,11 @@
 package repository
 
 import (
+	"context"
+
+	"github.com/IllhamHanafi/smart-traffic-routing-system/api-gateway/model"
 	"github.com/IllhamHanafi/smart-traffic-routing-system/shared-libs/config"
+	"github.com/google/uuid"
 )
 
 type Driver string
@@ -11,6 +15,8 @@ const (
 )
 
 type Repository interface {
+	CreateUser(ctx context.Context, input CreateUserInput) (uuid.UUID, error)
+	GetUserByEmail(ctx context.Context, email string) (model.User, error)
 	Close()
 }
 

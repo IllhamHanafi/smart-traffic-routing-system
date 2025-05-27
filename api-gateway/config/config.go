@@ -14,18 +14,10 @@ var (
 )
 
 type Config struct {
-	Environment string          `env:"ENVIRONMENT" envDefault:"development"`
-	Port        int             `env:"PORT" envDefault:"8080"`
-	Database    config.Database `envPrefix:"DB_"`
-}
-
-type Database struct {
-	Library      string `env:"LIBRARY" envDefault:"sqlc"`
-	Host         string `env:"HOST" envDefault:"localhost"`
-	Port         int    `env:"PORT" envDefault:"5432"`
-	Username     string `env:"USERNAME"`
-	Password     string `env:"PASSWORD"`
-	DatabaseName string `env:"DATABASE_NAME" envDefault:"api-gateway"`
+	Environment         string          `env:"ENVIRONMENT" envDefault:"development"`
+	Port                int             `env:"PORT" envDefault:"8080"`
+	Database            config.Database `envPrefix:"DB_"`
+	BcryptPasswordRound int             `env:"BCRYPT_PASSWORD_ROUND" envDefault:"12"`
 }
 
 func GetConfig() Config {
