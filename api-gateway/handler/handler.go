@@ -20,6 +20,7 @@ func New(i internal.InternalInterface) HandlerInterface {
 
 type HandlerInterface interface {
 	HandleRegisterUser(c *gin.Context)
+	HandleLoginUser(c *gin.Context)
 }
 
 func (h *handler) HandleRegisterUser(c *gin.Context) {
@@ -30,4 +31,14 @@ func (h *handler) HandleRegisterUser(c *gin.Context) {
 	}
 
 	h.internal.ProcessRegisterUser(c, input)
+}
+
+func (h *handler) HandleLoginUser(c *gin.Context) {
+	var input model.LoginUserInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	h.internal.ProcessLoginUser(c, input)
 }

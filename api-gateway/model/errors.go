@@ -7,4 +7,6 @@ var (
 	ErrInvalidEmail    = fmt.Errorf("invalid email")
 	ErrInvalidPassword = fmt.Errorf("invalid password")
 	ErrInvalidRole     = fmt.Errorf("invalid role")
+
+	ErrInvalidCredentials = fmt.Errorf("invalid email and password")
 )

@@ -18,6 +18,7 @@ type Config struct {
 	Port                int             `env:"PORT" envDefault:"8080"`
 	Database            config.Database `envPrefix:"DB_"`
 	BcryptPasswordRound int             `env:"BCRYPT_PASSWORD_ROUND" envDefault:"12"`
+	JWT                 config.JWT      `envPrefix:"JWT_"`
 }
 
 func GetConfig() Config {
