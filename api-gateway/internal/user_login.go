@@ -1,10 +1,11 @@
 package internal
 
 import (
-	"net/http"
 	"time"
 
 	"github.com/IllhamHanafi/smart-traffic-routing-system/api-gateway/model"
+	"github.com/IllhamHanafi/smart-traffic-routing-system/shared-libs/errorwrapper"
+	"github.com/IllhamHanafi/smart-traffic-routing-system/shared-libs/ginwrapper"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
@@ -13,37 +14,24 @@ import (
 func (s *Service) ProcessLoginUser(c *gin.Context, input model.LoginUserInput) {
 	res, err := s.repository.GetUserByEmail(c, input.Email)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": model.ErrInvalidCredentials,
-			"status":  "error",
-		})
+		ginwrapper.RespondWithError(c, model.ErrInvalidCredentials)
 		return
 	}
 
 	err = s.checkPasswordIsCorrect(res.Password, input.Password)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": model.ErrInvalidCredentials,
-			"status":  "error",
-		})
+		ginwrapper.RespondWithError(c, model.ErrInvalidCredentials)
 		return
 	}
 
 	token, err := s.generateTokenFromUser(res)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "internal server error",
-			"status":  "error",
-		})
+		ginwrapper.RespondWithError(c, errorwrapper.ErrInternalServerError)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "success",
-		"status":  "success",
-		"data": gin.H{
-			"token": token,
-		},
+	ginwrapper.RespondWithSuccess(c, model.LoginUserResponse{
+		AccessToken: token,
 	})
 }
 

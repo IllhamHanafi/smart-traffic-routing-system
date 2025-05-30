@@ -11,9 +11,12 @@ type ErrorResponse struct {
 	Status  string `json:"status"`
 	Errors  any    `json:"errors"`
 	Data    any    `json:"data"`
+	Detail  any    `json:"detail"`
 }
 
 const (
 	StatusSuccess = "success"
 	StatusFailed  = "failed"
+
+	MessageSuccess = "success"
 )

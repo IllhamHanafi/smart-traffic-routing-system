@@ -12,13 +12,13 @@ func RespondWithError(c *gin.Context, err errorwrapper.ErrorWrapper) {
 		Message: err.GetMessage(),
 		Status:  StatusFailed,
 		Errors:  err.GetCode(),
-		Data:    nil,
+		Detail:  err.GetDetail(),
 	})
 }
 
-func RespondWithSuccess(c *gin.Context, message string, data any) {
+func RespondWithSuccess(c *gin.Context, data any) {
 	c.JSON(http.StatusOK, SuccessResponse{
-		Message: message,
+		Message: MessageSuccess,
 		Status:  StatusSuccess,
 		Data:    data,
 	})

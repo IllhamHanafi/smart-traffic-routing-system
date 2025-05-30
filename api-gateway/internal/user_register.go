@@ -1,32 +1,27 @@
 package internal
 
 import (
-	"net/http"
 	"regexp"
 
 	"github.com/IllhamHanafi/smart-traffic-routing-system/api-gateway/model"
 	"github.com/IllhamHanafi/smart-traffic-routing-system/api-gateway/repository"
+	"github.com/IllhamHanafi/smart-traffic-routing-system/shared-libs/errorwrapper"
+	"github.com/IllhamHanafi/smart-traffic-routing-system/shared-libs/ginwrapper"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func (s *Service) ProcessRegisterUser(c *gin.Context, input model.RegisterUserInput) {
-	err := s.IsRegisterUserRequestValid(input)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
-			"status":  "input is invalid",
-		})
+	errValidation := s.IsRegisterUserRequestValid(input)
+	if errValidation.IsError() {
+		ginwrapper.RespondWithError(c, errValidation)
 		return
 	}
 
 	// encrypt password
 	encryptedPassword, err := s.encryptPassword(input.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-			"status":  "error",
-		})
+		ginwrapper.RespondWithError(c, errorwrapper.ErrInternalServerError)
 		return
 	}
 
@@ -40,17 +35,12 @@ func (s *Service) ProcessRegisterUser(c *gin.Context, input model.RegisterUserIn
 		UpdatedBy: input.CreatedBy,
 	})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-			"status":  "failed to create user",
-		})
+		ginwrapper.RespondWithError(c, model.ErrCreateUser)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "success",
-		"status":  "success",
-		"id":      id,
+	ginwrapper.RespondWithSuccess(c, model.RegisterUserResponse{
+		UserID: id,
 	})
 }
 
@@ -62,24 +52,24 @@ func (s *Service) encryptPassword(password string) (string, error) {
 	return string(bcryptPassword), nil
 }
 
-func (s *Service) IsRegisterUserRequestValid(input model.RegisterUserInput) error {
+func (s *Service) IsRegisterUserRequestValid(input model.RegisterUserInput) errorwrapper.ErrorWrapper {
 	// validate name
 	if input.Name == "" {
-		return model.ErrInvalidName
+		return model.ErrInvalidInput.WithDetail(map[string]any{"err": "name is required"})
 	}
 
 	// validate role
 	if input.Role == "" {
-		return model.ErrInvalidRole
+		return model.ErrInvalidInput.WithDetail(map[string]any{"err": "role is required"})
 	}
 
 	// validate email
 	if input.Email == "" {
-		return model.ErrInvalidEmail
+		return model.ErrInvalidInput.WithDetail(map[string]any{"err": "email is required"})
 	}
 	match, err := regexp.MatchString(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`, input.Email)
 	if err != nil || !match {
-		return model.ErrInvalidEmail
+		return model.ErrInvalidInput.WithDetail(map[string]any{"err": "email is invalid"})
 	}
 
 	// validate password
@@ -88,10 +78,10 @@ func (s *Service) IsRegisterUserRequestValid(input model.RegisterUserInput) erro
 	// min 1 number
 	// min 1 special char
 	if input.Password == "" {
-		return model.ErrInvalidPassword
+		return model.ErrInvalidInput.WithDetail(map[string]any{"err": "password is required"})
 	}
 	if len(input.Password) < 8 {
-		return model.ErrInvalidPassword
+		return model.ErrInvalidInput.WithDetail(map[string]any{"err": "password is too short"})
 	}
 	// to do: maybe use regexp to validate password
 	hasUppercase := false
@@ -113,8 +103,8 @@ func (s *Service) IsRegisterUserRequestValid(input model.RegisterUserInput) erro
 	}
 
 	if !hasUppercase || !hasNumber || !hasSpecialChar {
-		return model.ErrInvalidPassword
+		return model.ErrInvalidInput.WithDetail(map[string]any{"err": "password is invalid"})
 	}
 
-	return nil
+	return errorwrapper.ErrorWrapper{}
 }

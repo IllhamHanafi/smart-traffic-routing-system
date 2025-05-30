@@ -7,67 +7,103 @@ import (
 
 var (
 	ErrInternalServerError = ErrorWrapper{
-		httpStatusCode: http.StatusInternalServerError,
-		message:        "internal server error",
-		code:           "GEN_001",
+		HttpStatusCode: http.StatusInternalServerError,
+		Message:        "internal server error",
+		Code:           "GEN_001",
 	}
 	ErrBadRequest = ErrorWrapper{
-		httpStatusCode: http.StatusBadRequest,
-		message:        "bad request",
-		code:           "GEN_002",
+		HttpStatusCode: http.StatusBadRequest,
+		Message:        "bad request",
+		Code:           "GEN_002",
 	}
 	ErrNotFound = ErrorWrapper{
-		httpStatusCode: http.StatusNotFound,
-		message:        "resource not found",
-		code:           "GEN_003",
+		HttpStatusCode: http.StatusNotFound,
+		Message:        "resource not found",
+		Code:           "GEN_003",
 	}
 	ErrUnauthorized = ErrorWrapper{
-		httpStatusCode: http.StatusUnauthorized,
-		message:        "unauthorized",
-		code:           "GEN_004",
+		HttpStatusCode: http.StatusUnauthorized,
+		Message:        "unauthorized",
+		Code:           "GEN_004",
 	}
 	ErrForbidden = ErrorWrapper{
-		httpStatusCode: http.StatusForbidden,
-		message:        "forbidden",
-		code:           "GEN_005",
+		HttpStatusCode: http.StatusForbidden,
+		Message:        "forbidden",
+		Code:           "GEN_005",
+	}
+	ErrValidationNotPassed = ErrorWrapper{
+		HttpStatusCode: http.StatusBadRequest,
+		Message:        "validation not passed",
+		Code:           "GEN_006",
 	}
 )
 
 type ErrorWrapper struct {
-	httpStatusCode int
-	message        string
-	code           string
-	err            error
+	HttpStatusCode int
+	Message        string
+	Code           string
+	Err            error
+	Detail         map[string]any
 }
 
 func (e ErrorWrapper) Error() string {
-	if e.err == nil {
-		return fmt.Sprintf("%s: %s", e.code, e.message)
+	if e.Err == nil {
+		return fmt.Sprintf("%s: %s", e.Code, e.Message)
 	}
-	return e.err.Error()
+	return e.Err.Error()
 }
 
 func (e ErrorWrapper) Unwrap() error {
-	return e.err
+	return e.Err
 }
 
 func (e ErrorWrapper) GetHttpStatusCode() int {
-	if e.httpStatusCode == 0 {
+	if e.HttpStatusCode == 0 {
 		return http.StatusInternalServerError
 	}
-	return e.httpStatusCode
+	return e.HttpStatusCode
 }
 
 func (e ErrorWrapper) GetMessage() string {
-	if e.message == "" {
+	if e.Message == "" {
 		return "internal server error"
 	}
-	return e.message
+	return e.Message
 }
 
 func (e ErrorWrapper) GetCode() string {
-	if e.code == "" {
+	if e.Code == "" {
 		return "GEN_001"
 	}
-	return e.code
+	return e.Code
+}
+
+func (e ErrorWrapper) GetDetail() map[string]any {
+	if e.Detail == nil {
+		return map[string]any{}
+	}
+	return e.Detail
+}
+
+func (e ErrorWrapper) WithDetail(detail map[string]any) ErrorWrapper {
+	e.Detail = detail
+	return e
+}
+
+func (e ErrorWrapper) WithMessage(message string) ErrorWrapper {
+	e.Message = message
+	return e
+}
+func (e ErrorWrapper) WithCode(code string) ErrorWrapper {
+	e.Code = code
+	return e
+}
+
+func (e ErrorWrapper) WithError(err error) ErrorWrapper {
+	e.Err = err
+	return e
+}
+
+func (e ErrorWrapper) IsError() bool {
+	return e.Code != ""
 }

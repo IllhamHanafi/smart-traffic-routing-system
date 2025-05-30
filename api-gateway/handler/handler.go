@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"net/http"
-
 	"github.com/IllhamHanafi/smart-traffic-routing-system/api-gateway/internal"
 	"github.com/IllhamHanafi/smart-traffic-routing-system/api-gateway/model"
+	"github.com/IllhamHanafi/smart-traffic-routing-system/shared-libs/errorwrapper"
+	"github.com/IllhamHanafi/smart-traffic-routing-system/shared-libs/ginwrapper"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,7 +26,7 @@ type HandlerInterface interface {
 func (h *handler) HandleRegisterUser(c *gin.Context) {
 	var input model.RegisterUserInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ginwrapper.RespondWithError(c, errorwrapper.ErrValidationNotPassed.WithDetail(map[string]any{"error": err.Error()}))
 		return
 	}
 
@@ -36,7 +36,7 @@ func (h *handler) HandleRegisterUser(c *gin.Context) {
 func (h *handler) HandleLoginUser(c *gin.Context) {
 	var input model.LoginUserInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ginwrapper.RespondWithError(c, errorwrapper.ErrValidationNotPassed.WithDetail(map[string]any{"error": err.Error()}))
 		return
 	}
 
